@@ -4,7 +4,9 @@ enum FLAG_TYPE{
 	TEMP,
 	INFO,
 	SETTINGS,
-	DEMO
+	DEMO,
+	KILLS,
+	MONSTER_INFO
 };
 
 #region static
@@ -29,14 +31,14 @@ enum FLAG_STATIC{
 	ITEM_ARMOR,
 	PHONE,
 	PHONE_END=FLAG_STATIC.PHONE+8-1,
-	BATTLE_MENU_FIGHT_OBJ,
+	BATTLE_MENU_FIGHT,
 	PLOT,
 	MURDUR_LV,
-	KILLS,
 	ROOM,
 	TIME,
 	BOX,
-	BOX_END=FLAG_STATIC.BOX+20-1
+	BOX_END=FLAG_STATIC.BOX+20-1,
+	GENOCIDE
 };
 #endregion
 
@@ -56,7 +58,8 @@ enum FLAG_TEMP{
 	TRIGGER_WARP_LANDMARK,
 	TRIGGER_WARP_DIR,
 	TEXT_TYPER_CHOICE,
-	FRAME_SKIP
+	FRAME_SKIP,
+	PLAYER_STEPS
 };
 #endregion
 
@@ -81,5 +84,23 @@ enum FLAG_SETTINGS{
 #region demo
 enum FLAG_DEMO{
 	DATA
+};
+#endregion
+
+#region kills
+enum FLAG_KILLS{
+	KILLS_AREA_0,
+	KILLS_AREA_1,
+	KILLS_AREA_2,
+	KILLS_AREA_3,
+	KILLS_AREA_4
+};
+#endregion
+
+#region monster data
+enum FLAG_MONSTER_DATA{
+	MONSTER_SPARED_0=false,
+	MONSTER_SPARED_1=false,
+	MONSTER_SPARED_2=false,
 };
 #endregion

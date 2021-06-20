@@ -19,17 +19,28 @@ if(Battle_GetState()==BATTLE_STATE.MENU){
 	}
 	
 	//计算逃跑
-	if(BUTTON==BATTLE_MENU_CHOICE_BUTTON.MERCY && MERCY==BATTLE_MENU_CHOICE_MERCY.FLEE){
-		if(Battle_IsMenuMercyFleeEnabled()){
-			var value=irandom(100)+10*Battle_GetTurnNumber();
-			Battle_SetFleeable(round(value/100));
-		}else{
-			Battle_SetFleeable(false);
+	if(BUTTON==BATTLE_MENU_CHOICE_BUTTON.MERCY){
+		if(MERCY==BATTLE_MENU_CHOICE_MERCY.FLEE){
+			if(Battle_IsMenuMercyFleeEnabled()){
+				var value=irandom(100)+10*Battle_GetTurnNumber();
+				Battle_SetFleeable(round(value/100));
+			}else{
+				Battle_SetFleeable(false);
+			}
+		}
+		else if(MERCY==BATTLE_MENU_CHOICE_MERCY.SPARE){
+			for(var i=0; i<3; i++){
+				if(Battle_IsEnemySpareable(i)&&Battle_GetEnemy(i)._enemy_slot!=-1){
+					with(Battle_GetEnemy(i))
+						event_user(BATTLE_ENEMY_EVENT.MENU_END);
+					Battle_RemoveEnemy(i);
+				}
+			}
 		}
 	}
-	
-	//调用事件
-	Battle_CallEnemyEvent(BATTLE_ENEMY_EVENT.MENU_END);
+	else{
+		Battle_CallEnemyEvent(BATTLE_ENEMY_EVENT.MENU_END, Battle_GetMenuChoiceEnemy());
+	}
 	
 	if(Battle_GetEnemyNumber()>0){
 		//逃跑
@@ -59,6 +70,11 @@ if(Battle_GetState()==BATTLE_STATE.MENU){
 				text+=Lang_GetString("battle.result.fled.reward");
 				Player_SetExp(Player_GetExp()+Battle_GetRewardExp());
 				Player_SetGold(Player_GetGold()+Battle_GetRewardGold());
+				
+				Player_SetKills(Player_GetPlot(),Player_GetKills()+COUNT);
+				Console_OutputLine(string(COUNT));
+				Console_OutputLine(string(Player_GetKills())+"/"+string(Player_GetKillsMax()));
+				
 				if(Player_UpdateLv()){
 					//text+="&"+Lang_GetString("battle.result.lv_up");
 					audio_play_sound(snd_level_up,0,false);

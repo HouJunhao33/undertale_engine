@@ -1,4 +1,13 @@
-var ENCOUNTER=Flag_Get(FLAG_TYPE.TEMP,FLAG_TEMP.ENCOUNTER);
+if(Flag_Get(FLAG_TYPE.STATIC,FLAG_STATIC.GENOCIDE)==true) {
+	var ENCOUNTER=9999;
+}
+else {
+	var ENCOUNTER=Flag_Get(FLAG_TYPE.TEMP,FLAG_TEMP.ENCOUNTER);
+}
+
+//A really hacky fix
+COUNT=0;
+
 _enemy_object[0]=Encounter_GetEnemy(ENCOUNTER,0);
 _enemy_object[1]=Encounter_GetEnemy(ENCOUNTER,1);
 _enemy_object[2]=Encounter_GetEnemy(ENCOUNTER,2);
@@ -66,10 +75,11 @@ _menu_choice_mercy_override_name[1]="";
 _menu_choice_mercy_override_name[2]="";
 _menu_fleeable=false;
 _menu_mercy_flee_enabled=Encounter_IsMenuMercyFleeEnabled(ENCOUNTER);
-_menu_dialog=Encounter_GetMenuDialog(ENCOUNTER);
+_menu_dialog="{clear}"+Encounter_GetMenuDialog(ENCOUNTER);
 
 _menu_fight_damage=0;
 _menu_fight_anim_time=0;
+_menu_fight_damage_time_start=room_speed;
 _menu_fight_damage_time=0;
 
 _menu_item_used_last=-1;
@@ -89,3 +99,5 @@ _player_temp_atk=0;
 _player_temp_def=0;
 _player_temp_spd=0;
 _player_temp_inv=0;
+
+_bg_index=0;

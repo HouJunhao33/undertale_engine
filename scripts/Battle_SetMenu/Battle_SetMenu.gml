@@ -1,29 +1,31 @@
 ///@arg menu
-///@arg call_event*
+///@arg call_event_safe*
+///@arg call_event_allenemies*
 var MENU=argument[0];
-var CALL=true;
+var CALL_SAFE=true;
+var CALL_ALL=false;
 if(argument_count>=2){
-	CALL=argument[1];
+	CALL_SAFE=argument[1];
+}
+if(argument_count>=3){
+	CALL_ALL=argument[2];
 }
 
 battle._menu=MENU;
 Battle_SetDialog("",false,false);
 Battle_SetDialog("",false,true);
-	
-////////////////////////////////////////
-//按钮
-if(MENU==BATTLE_MENU.BUTTON){
-	Battle_SetDialog(Battle_GetMenuDialog());
-}
-	
+
 ////////////////////////////////////////
 //战斗/行动目标
 if(MENU==BATTLE_MENU.FIGHT_TARGET || MENU==BATTLE_MENU.ACT_TARGET){
 	//越界归零
-	if(Battle_GetMenuChoiceEnemy()>=Battle_GetEnemyNumber()){
-		Battle_SetMenuChoiceEnemy(0,false);
-	}
-		
+	if(_enemy[0]!=noone)
+		battle._menu_choice_enemy=0;
+	else if(_enemy[1]!=noone)&&(_enemy[0]==noone)
+		battle._menu_choice_enemy=1;
+	else if(_enemy[2]!=noone)&&(_enemy[1]==noone)&&(_enemy[0]==noone)
+		battle._menu_choice_enemy=2;
+	
 	var text="";
 	var proc=0;
 	//创建敌人列表文字
@@ -31,10 +33,10 @@ if(MENU==BATTLE_MENU.FIGHT_TARGET || MENU==BATTLE_MENU.ACT_TARGET){
 		var inst=Battle_GetEnemy(proc);
 		if(instance_exists(inst)){
 			if(Battle_IsEnemySpareable(proc)){
-				text+="{color `yellow`}"
+				text+="{color_text `yellow`}"
 			}
-			text+=Battle_GetEnemyName(proc)+"{color `white`}&";
 		}
+		text+=Battle_GetEnemyName(proc)+"{color_text `white`}&";
 		proc+=1;
 	}
 	Battle_SetDialog(text,true);
@@ -44,7 +46,7 @@ if(MENU==BATTLE_MENU.FIGHT_AIM){
 	Battle_SetMenuFightAnimTime(0);
 	Battle_SetMenuFightDamageTime(0);
 	
-	var OBJ=Flag_Get(FLAG_TYPE.STATIC,FLAG_STATIC.BATTLE_MENU_FIGHT_OBJ);
+	var OBJ=Flag_Get(FLAG_TYPE.STATIC,FLAG_STATIC.BATTLE_MENU_FIGHT);
 	if(object_exists(OBJ)){
 		if(OBJ==battle_menu_fight||Object_GetBaseParent(OBJ)==battle_menu_fight){
 			instance_create_depth(0,0,0,OBJ);
@@ -54,7 +56,7 @@ if(MENU==BATTLE_MENU.FIGHT_AIM){
 ////////////////////////////////////////
 //行动内容
 if(MENU==BATTLE_MENU.ACT_ACTION){
-	var ENEMY=Battle_ConvertMenuChoiceEnemyToEnemySlot(Battle_GetMenuChoiceEnemy());
+	var ENEMY=Battle_GetMenuChoiceEnemy();
 	var num=Battle_GetEnemyActionNumber(ENEMY);
 	
 	//越界归零
@@ -101,7 +103,7 @@ if(MENU==BATTLE_MENU.MERCY){
 		//仁慈菜单文字
 		repeat(3){
 			if(Battle_IsEnemySpareable(proc)){
-				text+="{color `yellow`}";
+				text+="{color_text `yellow`}";
 				break;
 			}
 			proc+=1;
@@ -129,7 +131,10 @@ if(MENU==BATTLE_MENU.MERCY){
 }
 	
 ////////////////////////////////////////
-if(CALL){
+if(CALL_SAFE){
+	Battle_CallEnemyEvent(BATTLE_ENEMY_EVENT.MENU_SWITCH, Battle_GetMenuChoiceEnemy());
+}
+if(CALL_ALL){
 	Battle_CallEnemyEvent(BATTLE_ENEMY_EVENT.MENU_SWITCH);
 }
 
